@@ -28,6 +28,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Show SDKs
+        run: |
+          xcodebuild -showsdks
+
       - name: Set up Procursus
         uses: beerpiss/procursus-action@v2
         with:
@@ -38,20 +46,6 @@ jobs:
       - name: Set up Theos
         run: |
           git clone --recursive --depth=1 https://github.com/theos/theos.git ~/theos
-
-      - name: Install tvOS SDK
-        run: |
-          mkdir -p ~/theos/sdks
-
-          curl -L \
-          https://github.com/theos/sdks/releases/download/2024.11.01/AppleTVOS15.6.sdk.tar.xz \
-          -o AppleTVOS15.6.sdk.tar.xz
-
-          tar -xJf AppleTVOS15.6.sdk.tar.xz -C ~/theos/sdks
-
-      - name: Verify SDK
-        run: |
-          ls -la ~/theos/sdks
 
       - name: Build Package
         id: package_build
