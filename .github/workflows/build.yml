@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     name: Build tvOS Rootful
-    runs-on: macos-14
+    runs-on: macos-13
 
     env:
       THEOS: ~/theos
@@ -43,13 +43,15 @@ jobs:
         run: |
           mkdir -p ~/theos/sdks
 
-          curl -LO https://github.com/theos/sdks/releases/latest/download/AppleTVOS15.6.sdk.tar.xz
+          curl -L \
+          https://github.com/theos/sdks/releases/download/2024.11.01/AppleTVOS15.6.sdk.tar.xz \
+          -o AppleTVOS15.6.sdk.tar.xz
 
-          tar -xvf AppleTVOS15.6.sdk.tar.xz -C ~/theos/sdks
+          tar -xJf AppleTVOS15.6.sdk.tar.xz -C ~/theos/sdks
 
       - name: Verify SDK
         run: |
-          ls ~/theos/sdks
+          ls -la ~/theos/sdks
 
       - name: Build Package
         id: package_build
