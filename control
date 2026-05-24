@@ -1,9 +1,16 @@
 Package: ws.hbang.newterm3
 Name: NewTerm 3 Beta
+
 Depends: firmware (>= 14.0), zsh, coreutils, ncurses, system-cmds
+
 Version: 3.0~beta1
 Architecture: appletvos-arm64
+
 Description: Powerful terminal app for tvOS
-Maintainer: HASHBANG Productions
+
+Maintainer: HASHBANG Productions <support@hbang.ws>
+Author: HASHBANG Productions <support@hbang.ws>
+
 Section: Utilities
+
 Tag: compatible_min::tvos14.0
