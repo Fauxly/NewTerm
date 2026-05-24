@@ -2,7 +2,7 @@ export TARGET = appletvos:clang:latest:15.0
 export ARCHS = arm64
 
 export INSTALL_PREFIX =
-export DEB_ARCH = appletvos-arm
+export DEB_ARCH = appletvos-arm64
 
 INSTALL_TARGET_PROCESSES = NewTerm
 
@@ -10,23 +10,19 @@ include $(THEOS)/makefiles/common.mk
 
 XCODEPROJ_NAME = NewTerm
 
-# tvOS scheme
 NewTerm_XCODE_SCHEME = NewTerm (tvOS)
 
-# Передаём install prefix в Xcode
 NewTerm_XCODEFLAGS = INSTALL_PREFIX=$(INSTALL_PREFIX)
 
-# Entitlements
 NewTerm_CODESIGN_FLAGS = -SApp/entitlements.plist
 
-# Rootful путь
 NewTerm_INSTALL_PATH = /Applications
 
 include $(THEOS_MAKE_PATH)/xcodeproj.mk
 
 before-package::
 	@echo "Fixing architecture in control file..."
-	perl -i -pe 's/iphoneos-arm/appletvos-arm/g' \
+	perl -i -pe 's/iphoneos-arm64/appletvos-arm64/g' \
 	$(THEOS_STAGING_DIR)/DEBIAN/control
 
 after-stage::
