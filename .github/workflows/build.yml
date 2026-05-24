@@ -18,44 +18,50 @@ on:
 jobs:
   build:
     name: Build tvOS Rootful
-    runs-on: macos-14
+    runs-on: macos-12
 
     env:
       THEOS: ~/theos
 
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Set up Procursus
-      uses: beerpiss/procursus-action@v2
-      with:
-        packages: ldid xz-utils cmark make perl git
-        cache: true
-        cache-path: ~/__cache
+      - name: Set up Procursus
+        uses: beerpiss/procursus-action@v2
+        with:
+          packages: ldid xz-utils cmark make perl git
+          cache: true
+          cache-path: ~/__cache
 
-    - name: Set up Theos
-      run: |
-        git clone --recursive --depth=1 https://github.com/theos/theos.git ~/theos
+      - name: Set up Theos
+        run: |
+          git clone --recursive --depth=1 https://github.com/theos/theos.git ~/theos
 
-    - name: Install tvOS SDK
-      run: |
-        mkdir -p ~/theos/sdks
+      - name: Install tvOS SDK
+        run: |
+          mkdir -p ~/theos/sdks
 
-        curl -LO https://github.com/theos/sdks/releases/latest/download/AppleTVOS15.6.sdk.tar.xz
+          curl -LO https://github.com/theos/sdks/releases/latest/download/AppleTVOS15.6.sdk.tar.xz
 
-        tar -xvf AppleTVOS15.6.sdk.tar.xz -C ~/theos/sdks
+          tar -xvf AppleTVOS15.6.sdk.tar.xz -C ~/theos/sdks
 
-    - name: Build Package
-      id: package_build
-      run: |
-        gmake clean package FINALPACKAGE=1
+      - name: Verify SDK
+        run: |
+          ls ~/theos/sdks
 
-        echo "package=$(find packages -name '*.deb' | head -n 1)" >> $GITHUB_OUTPUT
+      - name: Build Package
+        id: package_build
+        run: |
+          gmake clean package FINALPACKAGE=1
 
-    - name: Upload DEB
-      uses: actions/upload-artifact@v3
-      with:
-        name: NewTerm-tvOS-rootful
-        path: ${{ steps.package_build.outputs.package }}
+          PACKAGE=$(find packages -name "*.deb" | head -n 1)
+
+          echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+
+      - name: Upload DEB
+        uses: actions/upload-artifact@v4
+        with:
+          name: NewTerm-tvOS-rootful
+          path: ${{ steps.package_build.outputs.package }}
