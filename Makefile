@@ -1,4 +1,4 @@
-export TARGET = appletvos:clang:latest:15.0
+export TARGET = iphone:clang:latest:15.0
 export ARCHS = arm64
 
 export INSTALL_PREFIX =
@@ -21,11 +21,10 @@ NewTerm_INSTALL_PATH = /Applications
 include $(THEOS_MAKE_PATH)/xcodeproj.mk
 
 before-package::
-	@echo "Fixing architecture in control file..."
+	@echo "Fixing control architecture..."
 	perl -i -pe 's/iphoneos-arm64/appletvos-arm64/g' \
 	$(THEOS_STAGING_DIR)/DEBIAN/control
 
 after-stage::
-	@echo "Codesigning LoginHelper..."
 	@$(TARGET_CODESIGN) $(NewTerm_CODESIGN_FLAGS) \
 	$(THEOS_STAGING_DIR)/Applications/NewTerm.app/NewTermLoginHelper
