@@ -1,12 +1,8 @@
-export TARGET = iphone:latest:14.0
+export TARGET = appletvos:clang:latest:15.0
 export ARCHS = arm64
 
-ifeq ($(ROOTLESS),1)
-	export DEB_ARCH = iphoneos-arm64
-	export INSTALL_PREFIX = /var/jb
-else
-	export DEB_ARCH = iphoneos-arm
-endif
+export INSTALL_PREFIX =
+export DEB_ARCH = appletvos-arm
 
 INSTALL_TARGET_PROCESSES = NewTerm
 
@@ -14,15 +10,26 @@ include $(THEOS)/makefiles/common.mk
 
 XCODEPROJ_NAME = NewTerm
 
-NewTerm_XCODE_SCHEME = NewTerm (iOS)
+# tvOS scheme
+NewTerm_XCODE_SCHEME = NewTerm (tvOS)
+
+# Передаём install prefix в Xcode
 NewTerm_XCODEFLAGS = INSTALL_PREFIX=$(INSTALL_PREFIX)
+
+# Entitlements
 NewTerm_CODESIGN_FLAGS = -SApp/entitlements.plist
-NewTerm_INSTALL_PATH = $(INSTALL_PREFIX)/Applications
+
+# Rootful путь
+NewTerm_INSTALL_PATH = /Applications
 
 include $(THEOS_MAKE_PATH)/xcodeproj.mk
 
 before-package::
-	perl -i -pe s/iphoneos-arm/$(DEB_ARCH)/ $(THEOS_STAGING_DIR)/DEBIAN/control
+	@echo "Fixing architecture in control file..."
+	perl -i -pe 's/iphoneos-arm/appletvos-arm/g' \
+	$(THEOS_STAGING_DIR)/DEBIAN/control
 
 after-stage::
-	@$(TARGET_CODESIGN) $(NewTerm_CODESIGN_FLAGS) $(THEOS_STAGING_DIR)$(INSTALL_PREFIX)/Applications/NewTerm.app/NewTermLoginHelper
+	@echo "Codesigning LoginHelper..."
+	@$(TARGET_CODESIGN) $(NewTerm_CODESIGN_FLAGS) \
+	$(THEOS_STAGING_DIR)/Applications/NewTerm.app/NewTermLoginHelper
