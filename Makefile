@@ -10,12 +10,16 @@ include $(THEOS)/makefiles/common.mk
 
 XCODEPROJ_NAME = NewTerm
 
-NewTerm_XCODE_SCHEME = NewTerm (tvOS)
+# Используем существующую scheme
+NewTerm_XCODE_SCHEME = NewTerm
 
+# Передаём install prefix
 NewTerm_XCODEFLAGS = INSTALL_PREFIX=$(INSTALL_PREFIX)
 
+# Entitlements
 NewTerm_CODESIGN_FLAGS = -SApp/entitlements.plist
 
+# Rootful install path
 NewTerm_INSTALL_PATH = /Applications
 
 include $(THEOS_MAKE_PATH)/xcodeproj.mk
@@ -26,5 +30,6 @@ before-package::
 	$(THEOS_STAGING_DIR)/DEBIAN/control
 
 after-stage::
+	@echo "Codesigning LoginHelper..."
 	@$(TARGET_CODESIGN) $(NewTerm_CODESIGN_FLAGS) \
 	$(THEOS_STAGING_DIR)/Applications/NewTerm.app/NewTermLoginHelper
